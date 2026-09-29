@@ -238,7 +238,11 @@ using namespace std;
 // =============================================================================
 
 bool push(Stack& s, int nilai) {
-    return false;
+    Node* newNode = new Node;
+    newNode->data = nilai;
+    newNode->next = s.top;
+    s.top = newNode;
+    return true;
 }
 
 // =============================================================================
@@ -300,7 +304,15 @@ bool push(Stack& s, int nilai) {
 // =============================================================================
 
 bool pop(Stack& s, int& nilai) {
-    return false;
+    if (s.top != nullptr) {
+        Node* temp = s.top;
+        nilai = temp->data;
+        s.top = temp->next;
+        delete temp;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 // =============================================================================
@@ -347,6 +359,11 @@ bool pop(Stack& s, int& nilai) {
 // =============================================================================
 
 void clear(Stack& s) {
+    while (s.top != nullptr) {
+        Node* temp = s.top;
+        s.top = temp->next;
+        delete temp;
+    }
 }
 
 // =============================================================================
@@ -410,7 +427,46 @@ void clear(Stack& s) {
 // =============================================================================
 
 bool kurungSeimbang(const string& ekspresi) {
-    return false;
+    Stack s;
+    inisialisasi(s);
+
+    for (char c : ekspresi) {
+        if (c == '(' || c == '[' || c == '{') {
+            push(s, c);
+        } else if (c == ')' || c == ']' || c == '}') {
+            int topValue;
+            if (!pop(s, topValue)) {
+                
+                while (s.top != nullptr) {
+                    Node* temp = s.top;
+                    s.top = temp->next;
+                    delete temp;
+                }
+                return false;
+            }
+
+            if ((c == ')' && topValue != '(') ||
+                (c == ']' && topValue != '[') ||
+                (c == '}' && topValue != '{')) {
+                while (s.top != nullptr) {
+                    Node* temp = s.top;
+                    s.top = temp->next;
+                    delete temp;
+                }
+                return false;
+            }
+        }
+    }
+
+    bool result = isEmpty(s);
+    
+    while (s.top != nullptr) {
+        Node* temp = s.top;
+        s.top = temp->next;
+        delete temp;
+    }
+
+    return result;
 }
 
 // =============================================================================
